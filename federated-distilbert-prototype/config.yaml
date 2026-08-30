@@ -1,0 +1,34 @@
+model_name: xlm-roberta-base
+labels:
+  - joy
+  - anger
+  - fear
+  - sadness
+  - surprise
+  - disgust
+training:
+  rounds: 5
+  clients: 10
+  client_fraction: 1.0
+  local_epochs: 1
+  batch_size: 8
+  learning_rate: 2.0e-5
+  max_length: 128
+  optimizer: adamw
+  strategy: fedavg
+  proximal_mu: 0.01
+data:
+  train_fraction: 0.70
+  validation_fraction: 0.15
+  test_fraction: 0.15
+  dirichlet_alpha: 0.5
+privacy:
+  enabled: true
+  delta: 1.0e-5
+  max_grad_norm: 1.0
+  noise_multiplier: 1.1
+  accounting: rdp
+secure_aggregation:
+  enabled: true
+xai:
+  integrated_gradients_steps: 32

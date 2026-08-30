@@ -1,0 +1,56 @@
+import torch
+from torch import nn
+import os
+import safetensors.torch
+from transformers import XLMRobertaConfig, XLMRobertaModel
+
+class XLMRMultiLabel(nn.Module):
+    def __init__(self, model_name="xlm-roberta-base", num_labels=6, dropout=0.2):
+        super().__init__()
+        print(f"XLMRMultiLabel: Loading {model_name}...", flush=True)
+        
+        print("Step 1: Loading config...", flush=True)
+        config = XLMRobertaConfig.from_pretrained(model_name)
+        print(f"Step 2: Config loaded", flush=True)
+        
+        print("Step 3: Creating model...", flush=True)
+        self.encoder = XLMRobertaModel(config)
+        print("Step 4: Model created", flush=True)
+        
+        print("Step 5: Loading weights from safetensors...", flush=True)
+        cache_dir = os.path.expanduser("~/.cache/huggingface/hub")
+        safetensors_file = None
+        
+        for root, dirs, files in os.walk(cache_dir):
+            for file in files:
+                if file == "model.safetensors" and "xlm-roberta" in root.lower():
+                    safetensors_file = os.path.join(root, file)
+                    break
+            if safetensors_file:
+                break
+        
+        if safetensors_file:
+            print(f"Step 6: Found weights", flush=True)
+            state_dict = safetensors.torch.load_file(safetensors_file)
+            print(f"Step 7: Loaded {len(state_dict)} tensors", flush=True)
+            self.encoder.load_state_dict(state_dict, strict=False)
+            print("Step 8: Weights loaded successfully", flush=True)
+        else:
+            raise FileNotFoundError("Could not find model.safetensors file")
+        
+        self.dropout = nn.Dropout(dropout)
+        self.classifier = nn.Linear(config.hidden_size, num_labels)
+        print(f"XLMRMultiLabel: Model ready", flush=True)
+
+    def forward(self, input_ids, attention_mask):
+        print("forward: encoder start", flush=True)
+        out = self.encoder(input_ids=input_ids, attention_mask=attention_mask)
+        print("forward: encoder done", flush=True)
+        pooled = out.last_hidden_state[:, 0]
+        print("forward: pooled done", flush=True)
+        result = self.classifier(self.dropout(pooled))
+        print("forward: classifier done", flush=True)
+        return result
+
+    def probabilities(self, input_ids, attention_mask):
+        return torch.sigmoid(self.forward(input_ids, attention_mask))
