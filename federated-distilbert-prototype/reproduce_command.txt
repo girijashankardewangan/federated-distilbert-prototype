@@ -1,0 +1,16 @@
+# Exact command to reproduce the results in Table 2
+# Run from /content/drive/MyDrive/ on Google Colab (T4 GPU)
+
+python -m federated.train \
+    --source brighter \
+    --languages eng \
+    --custom-split \
+    --rounds 5 \
+    --clients 5 \
+    --batch-size 8 \
+    --max-length 64 \
+    --lr 1e-5 \
+    --dp \
+    --noise-multiplier 1.1 \
+    --seed 42 \
+    --model distilbert-base-uncased
