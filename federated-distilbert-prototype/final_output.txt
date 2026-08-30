@@ -1,0 +1,3 @@
+
+Final output from DistilBERT BRIGHTER run:
+{'round': 5, 'macro_f1': 0.2718071372026977, 'micro_f1': 0.5086565096952909, 'clients': 5, 'train_samples': 5965}
