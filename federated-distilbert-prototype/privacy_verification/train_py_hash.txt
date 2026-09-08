@@ -1,0 +1,5 @@
+SHA256: b637a5e27c70aeb8d84dccfaa2d9d4f76d00dc6b19787c845523d0bb2de51b0b
+This version should be checked against the Opacus RDP accountant assumptions.
+Claimed budget: (ε=0.63, δ=1e-5) for T=3750, q=8/5965, σ=1.1, C=1.0.
+The code must implement per-example gradient clipping and Poisson sampling to match this.
+If not, the budget is not applicable to the measured runs.
