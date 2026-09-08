@@ -1,0 +1,14 @@
+============================================================
+🔐 FINAL HASH VERIFICATION REPORT
+============================================================
+Commit: 0c0452b
+Timestamp: Tue Sep  8 06:32:32 PM UTC 2026
+
+✅ controlled_experiment_per_seed.csv: MATCH (Current: cd6ca5ec..., Stored: cd6ca5ec...)
+✅ statistical_tests_verified.csv: MATCH (Current: 40d56dad..., Stored: 40d56dad...)
+✅ reproduce_config.json: MATCH (Current: 8f622b19..., Stored: 8f622b19...)
+✅ train.py: MATCH (Current: b637a5e2..., Stored: b637a5e2...)
+
+============================================================
+FINAL VERDICT: ✅ ALL VERIFIED
+============================================================
