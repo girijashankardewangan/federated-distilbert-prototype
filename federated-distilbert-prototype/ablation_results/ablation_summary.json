@@ -1,0 +1,30 @@
+[
+  {
+    "method": "Centralized",
+    "macro_mean": 0.1193,
+    "macro_std": 0.0014,
+    "micro_mean": 0.4374,
+    "micro_std": 0.0069
+  },
+  {
+    "method": "FedAvg",
+    "macro_mean": 0.1523,
+    "macro_std": 0.0663,
+    "micro_mean": 0.3734,
+    "micro_std": 0.1645
+  },
+  {
+    "method": "FedAvg+Clip",
+    "macro_mean": 0.114,
+    "macro_std": 0.0753,
+    "micro_mean": 0.2814,
+    "micro_std": 0.1939
+  },
+  {
+    "method": "FedAvg+Clip+Noise",
+    "macro_mean": 0.201,
+    "macro_std": 0.1056,
+    "micro_mean": 0.3203,
+    "micro_std": 0.1419
+  }
+]
