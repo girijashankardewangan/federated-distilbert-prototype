@@ -1,0 +1,3 @@
+VERIFIED: Controlled Experiment Per-Seed CSV
+CSV path: tables/controlled_experiment_per_seed.csv
+Recomputed aggregates match Paper Table 6: True

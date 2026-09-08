@@ -1,0 +1,8 @@
+VERIFIED: Privacy Accounting
+Current train.py SHA256: b637a5e27c70aeb8d84dccfaa2d9d4f76d00dc6b19787c845523d0bb2de51b0b
+Stored SHA256: b637a5e27c70aeb8d84dccfaa2d9d4f76d00dc6b19787c845523d0bb2de51b0b
+Match: True
+Claimed budget: (ε=0.63, δ=1e-5) for T=3750, q=8/5965, σ=1.1, C=1.0
+NOTE: This verification only checks code version matching.
+Actual DP guarantee requires the code to implement per-example clipping and Poisson sampling.
+If not, the budget is not applicable to the measured runs.

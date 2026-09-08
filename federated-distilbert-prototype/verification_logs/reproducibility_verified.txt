@@ -1,0 +1,5 @@
+VERIFIED: Reproducibility Package
+Path: reproducibility_package/reproduce_config.json
+Commands: ['main_federated', 'controlled_centralized', 'controlled_fedavg', 'controlled_clip', 'controlled_noise']
+Seeds: [0, 1, 2, 3, 4]
+Threshold: validation-based checkpoint selection (best macro F1 on validation set)

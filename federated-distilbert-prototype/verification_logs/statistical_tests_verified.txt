@@ -1,0 +1,3 @@
+VERIFIED: Statistical Tests CSV
+CSV path: tables/statistical_tests_verified.csv
+Recomputed tests match Paper Table 7: True
