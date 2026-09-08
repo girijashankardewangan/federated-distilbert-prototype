@@ -1,0 +1,14 @@
+{
+  "noise_multiplier": 1.1,
+  "max_grad_norm": 1.0,
+  "sample_rate": 0.001341,
+  "total_steps": 3750,
+  "delta": 1e-05,
+  "epsilon": 0.63,
+  "accountant": "R\u00e9nyi Differential Privacy (RDP) via Opacus",
+  "clients": 5,
+  "rounds": 5,
+  "local_epochs": 1,
+  "batch_size": 8,
+  "total_train_samples": 5965
+}
