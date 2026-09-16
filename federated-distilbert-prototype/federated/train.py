@@ -190,52 +190,11 @@ def local_train(
                 loss = loss + penalty
 
             # ============================================================
-            # BYPASS BACKWARD CRASH - Manual Gradient Calculation
-            # ============================================================
-            print(f"batch {batch_no}: manual gradient calculation", flush=True)
-            print(f"loss requires_grad: {loss.requires_grad}", flush=True)
-            sys.stdout.flush()
-
-            # Get loss value
-            loss_value = loss.item()
-            print(f"loss_value: {loss_value:.6f}", flush=True)
-
-            # Get all trainable parameters
-            params = [p for p in model.parameters() if p.requires_grad]
-            print(f"Number of trainable parameters: {len(params)}", flush=True)
-            sys.stdout.flush()
-
-            try:
-                # Compute gradients manually using torch.autograd.grad
-                print("Computing gradients with torch.autograd.grad...", flush=True)
-                sys.stdout.flush()
-                
-                grads = torch.autograd.grad(
-                    loss, 
-                    params,
-                    retain_graph=False,
-                    allow_unused=True
-                )
-                
-                print("Gradients computed successfully", flush=True)
-                
-                # Assign gradients to parameters
-                grad_count = 0
-                for param, grad in zip(params, grads):
-                    if grad is not None:
-                        param.grad = grad.detach().clone()
-                        grad_count += 1
-                    else:
-                        param.grad = None
-                
-                print(f"Assigned gradients to {grad_count} parameters", flush=True)
-                
-            except Exception as e:
-                print(f"Manual gradient calculation failed: {e}", flush=True)
-                import traceback
-                traceback.print_exc()
-                sys.stdout.flush()
-                sys.exit(1)
+            # Standard backward pass (Opacus-compatible)
+            loss.backward()
+            if not dp:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=max_norm)
+            optimizer.step()
 
             # Check if gradients exist
             has_grad = False
