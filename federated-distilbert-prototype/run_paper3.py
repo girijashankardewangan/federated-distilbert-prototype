@@ -18,9 +18,10 @@ from data.brighter import build_custom_split, LANGUAGE_CONFIGS
 from data.partitioning import dirichlet_partition
 from models.xlm_roberta import XLMRMultiLabel
 from federated.strategies import multilabel_loss
-from federated.aggregation import weighted_fedavg
+from federated.aggregation import weighted_fedavg, weighted_fedavg_safe, weighted_fedavg_qlora
 from evaluation.metrics import multilabel_metrics
 from privacy.opacus_dp import make_private_with_dp, get_epsilon, freeze_position_embeddings
+from privacy.hybrid_dp import make_hybrid_private
 from utils.checkpoint import CheckpointManager
 from transformers import AutoTokenizer
 
@@ -68,15 +69,34 @@ def evaluate(model, loader, device):
     return float(r["macro_f1"]), float(r["micro_f1"])
 
 
+
+
+def strip_opacus_prefix(state_dict):
+    """Remove Opacus '_module.' prefix from state dict keys."""
+    new_state = {}
+    for k, v in state_dict.items():
+        if k.startswith("_module."):
+            new_state[k[len("_module."):]] = v
+        else:
+            new_state[k] = v
+    return new_state
+
 def local_train(model, loader, device, epochs, lr, max_norm,
-                use_opacus=False, target_epsilon=2.0, target_delta=1e-5):
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+                use_opacus=False, use_hybrid_dp=False,
+                target_epsilon=2.0, target_delta=1e-5):
     engine = None
-    if use_opacus:
-        model, optimizer, loader, engine = make_private_with_dp(
-            model=model, optimizer=optimizer, data_loader=loader,
+    if use_hybrid_dp:
+        model, optimizer, loader, engine = make_hybrid_private(
+            model=model, data_loader=loader, lr=lr,
             target_epsilon=target_epsilon, target_delta=target_delta,
             max_grad_norm=max_norm, epochs=epochs)
+    elif use_opacus:
+        model, optimizer, loader, engine = make_private_with_dp(
+            model=model, data_loader=loader, lr=lr,
+            target_epsilon=target_epsilon, target_delta=target_delta,
+            max_grad_norm=max_norm, epochs=epochs)
+    else:
+        optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     model.train()
     losses = []
     for _ in range(epochs):
@@ -124,8 +144,14 @@ def main(args):
                                      clients=args.clients, alpha=args.dirichlet_alpha, seed=42)
     print(f"Client sizes: {[len(c) for c in client_dfs]}")
 
-    global_model = XLMRMultiLabel(model_name=args.model_name, num_labels=len(LABELS_5))
-    global_model = freeze_position_embeddings(global_model)
+    global_model = XLMRMultiLabel(
+        model_name=args.model_name,
+        num_labels=len(LABELS_5),
+        use_lora=args.use_lora,
+        use_qlora=args.use_qlora,
+        lora_r=args.lora_r,
+        lora_alpha=args.lora_alpha,
+    )
     global_model.to(device)
 
     start_round = 0
@@ -156,11 +182,12 @@ def main(args):
             local_model, avg_loss, eps = local_train(
                 model=local_model, loader=client_loader, device=device,
                 epochs=args.local_epochs, lr=args.lr, max_norm=args.max_grad_norm,
-                use_opacus=args.use_dp, target_epsilon=args.target_epsilon,
+                use_opacus=args.use_dp, use_hybrid_dp=args.use_hybrid_dp,
+                target_epsilon=args.target_epsilon,
                 target_delta=args.target_delta)
             if eps is not None:
                 round_eps = eps
-            client_states.append(local_model.state_dict())
+            client_states.append(strip_opacus_prefix(local_model.state_dict()))
             client_counts.append(len(client_df))
             print(f"  Client {cid}: n={len(client_df)}, loss={avg_loss:.4f}, eps={eps}")
 
@@ -172,8 +199,16 @@ def main(args):
             gc.collect()
             torch.cuda.empty_cache()
 
-        global_state = weighted_fedavg(client_states, client_counts)
-        global_model.load_state_dict(global_state)
+        if args.use_qlora:
+            global_state = weighted_fedavg_qlora(
+                client_states, client_counts, 
+                global_state=global_model.state_dict()
+            )
+        else:
+            global_state = weighted_fedavg(client_states, client_counts)
+        
+        # Load with strict=False for QLoRA (metadata may differ)
+        global_model.load_state_dict(global_state, strict=False)
 
         val_macro, val_micro = evaluate(global_model, val_loader, device)
         test_macro, test_micro = evaluate(global_model, test_loader, device)
@@ -214,6 +249,11 @@ def main(args):
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--model_name", default="distilbert-base-uncased")
+    p.add_argument("--use_lora", action="store_true")
+    p.add_argument("--lora_r", type=int, default=8)
+    p.add_argument("--lora_alpha", type=int, default=16)
+    p.add_argument("--use_qlora", action="store_true")
+    p.add_argument("--use_hybrid_dp", action="store_true")
     p.add_argument("--languages", nargs="+", default=["eng"])
     p.add_argument("--clients", type=int, default=5)
     p.add_argument("--rounds", type=int, default=2)

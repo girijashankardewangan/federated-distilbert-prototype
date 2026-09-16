@@ -1,4 +1,4 @@
-"""Paper 3: Opacus DP integration."""
+"""Paper 3: Opacus DP integration (fix model once)."""
 import torch
 from opacus import PrivacyEngine
 from opacus.validators import ModuleValidator
@@ -10,26 +10,31 @@ def freeze_position_embeddings(model):
         if "position_embeddings" in name or "position_ids" in name:
             param.requires_grad = False
             frozen.append(name)
-    if frozen:
-        print(f"Frozen {len(frozen)} position embedding params")
     return model
 
 
-def make_model_private(model):
+def fix_model_once(model):
+    """Apply ModuleValidator.fix() and mark model as fixed."""
+    if getattr(model, "_opacus_fixed", False):
+        return model
     errors = ModuleValidator.validate(model, strict=False)
     if errors:
+        print(f"Fixing model ONCE (found {len(errors)} issues)")
         model = ModuleValidator.fix(model)
-        print("Model fixed for Opacus.")
-    else:
-        print("Model already Opacus-compatible.")
+    model._opacus_fixed = True
     return model
 
 
-def make_private_with_dp(model, optimizer, data_loader,
+def make_private_with_dp(model, data_loader, lr,
                          target_epsilon=2.0, target_delta=1e-5,
                          max_grad_norm=1.0, epochs=1):
     model = freeze_position_embeddings(model)
-    model = make_model_private(model)
+    model = fix_model_once(model)
+    model.train()
+
+    trainable = [p for p in model.parameters() if p.requires_grad]
+    optimizer = torch.optim.AdamW(trainable, lr=lr)
+
     privacy_engine = PrivacyEngine(accountant="rdp")
     model, optimizer, data_loader = privacy_engine.make_private_with_epsilon(
         module=model, optimizer=optimizer, data_loader=data_loader,

@@ -34,3 +34,56 @@ def fairness_weighted_aggregation(states, counts, fairness_weights):
             weighted_sum += weights[i] * state[key]
         aggregated_state[key] = weighted_sum
     return aggregated_state
+
+def weighted_fedavg_safe(states, counts):
+    """FedAvg that skips quantized (Byte) tensors — for QLoRA compatibility."""
+    total = sum(counts)
+    weights = [c / total for c in counts]
+    aggregated = {}
+    for key in states[0].keys():
+        # Skip non-float tensors (quantization scales, zero-points)
+        if states[0][key].dtype not in (torch.float32, torch.float16, torch.bfloat16):
+            aggregated[key] = states[0][key].clone()
+            continue
+        weighted_sum = torch.zeros_like(states[0][key], dtype=torch.float32)
+        for i, state in enumerate(states):
+            weighted_sum += weights[i] * state[key].float()
+        aggregated[key] = weighted_sum.to(states[0][key].dtype)
+    return aggregated
+
+
+def weighted_fedavg_qlora(states, counts, global_state=None):
+    """
+    FedAvg for QLoRA: only aggregates trainable params (LoRA + classifier).
+    Skips quantization metadata (absmax, quant_map, etc.).
+    """
+    total = sum(counts)
+    weights = [c / total for c in counts]
+    aggregated = {}
+    
+    for key in states[0].keys():
+        # Skip quantization metadata
+        if any(x in key for x in ['absmax', 'quant_map', 'quant_state', 
+                                    'nested_absmax', 'nested_quant_map',
+                                    'quant_state.bitsandbytes']):
+            if global_state is not None and key in global_state:
+                aggregated[key] = global_state[key].clone()
+            else:
+                aggregated[key] = states[0][key].clone()
+            continue
+        
+        # Only average float tensors
+        if states[0][key].dtype not in (torch.float32, torch.float16, torch.bfloat16):
+            if global_state is not None and key in global_state:
+                aggregated[key] = global_state[key].clone()
+            else:
+                aggregated[key] = states[0][key].clone()
+            continue
+        
+        # Average float tensors
+        weighted_sum = torch.zeros_like(states[0][key], dtype=torch.float32)
+        for i, state in enumerate(states):
+            weighted_sum += weights[i] * state[key].float()
+        aggregated[key] = weighted_sum.to(states[0][key].dtype)
+    
+    return aggregated
