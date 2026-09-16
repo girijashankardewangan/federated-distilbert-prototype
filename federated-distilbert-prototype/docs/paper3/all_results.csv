@@ -1,0 +1,8 @@
+method,batch,lr,rounds,epsilon,macro_f1,micro_f1,time_s,ckpt_mb,status
+LoRA no-DP,16,0.0005,5.0,,0.7287,0.7655,54.0,2.0,success
+Full FT no-DP,8,2e-05,2.0,,0.6565,0.7217,52.0,265.0,success
+Full FT + DP,4,2e-05,3.0,3.99,0.2009,0.4503,160.0,265.0,success
+LoRA + DP r=8,8,0.0002,2.0,1.97,0.2646,0.4198,240.0,2.0,low_f1
+LoRA + DP r=32,16,0.0001,5.0,7.99,0.1514,0.4491,67.0,2.0,failed
+Hybrid DP,16,0.0005,5.0,1.99,0.1422,0.4378,40.0,2.0,failed
+QLoRA + DP,16,0.0001,,,,,,,incompatible
