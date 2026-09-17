@@ -1,4 +1,4 @@
-# Paper 3 — Abstract
+# Paper 3 — Abstract (Short, Evidence-Aligned)
 
 **Title:** Communication-Privacy Trade-offs in Federated Emotion Analytics: An Empirical Study of LoRA and DP-SGD Integration
 
@@ -8,18 +8,24 @@
 
 ## Abstract
 
-Federated learning enables collaborative model training without sharing raw data, but practical deployment requires balancing communication efficiency, privacy protection, and predictive utility. We present an empirical study of parameter-efficient federated learning for multi-label emotion classification on the BRIGHTER English dataset across five clients using DistilBERT. We compare three training paradigms — full fine-tuning, Low-Rank Adaptation (LoRA), and Quantized LoRA (QLoRA) — each evaluated with and without differentially private stochastic gradient descent (DP-SGD).
+Federated learning balances communication cost, privacy, and utility. We study parameter-efficient federated emotion classification on BRIGHTER English across five clients using DistilBERT. We compare full fine-tuning, Low-Rank Adaptation (LoRA), and Quantized LoRA (QLoRA), each evaluated with and without DP-SGD. Non-private LoRA reaches macro-F1 = 0.7287 with approximately 2 MB per client update versus 265 MB for full fine-tuning. Full fine-tuning with DP-SGD reaches macro-F1 = 0.2009 at a reported accounting budget of epsilon ~ 4 (delta = 1e-5). Tested LoRA-DP configurations show low utility or execution failures across the variants attempted.
 
-Our findings are threefold. First, non-private LoRA achieves macro-F1 = 0.7287 with approximately 2 MB per client update, compared with 265 MB for full fine-tuning — a reduction of roughly two orders of magnitude. Second, full fine-tuning with DP-SGD reaches macro-F1 = 0.2009 at a reported accounting budget of epsilon ~ 4 (delta = 1e-5). Third, all tested LoRA-DP configurations exhibit low predictive scores (macro-F1 ~ 0.1421) or execution failures across eight variants.
+The saved notebook output records epsilon = 0.6283 for the specified accounting inputs (sigma = 1.1, q = 8/5965, T = 3750, delta = 1e-5); this is an accounting calculation, not a training-privacy verification. We examine signal-to-noise imbalance as a working hypothesis for low utility; the supplied gradient and noise scales give a ratio of approximately 600, which is suggestive but not a causal diagnosis. Our FedSVD adaptation yielded macro-F1 = 0.1421 across three rounds at the reported precision.
 
-We perform a systematic diagnosis. We reproduce the RDP accountant calculation (epsilon = 0.6283 for sigma = 1.1, q = 8/5965, T = 3750, delta = 1e-5), numerically consistent with previously reported values. We isolate and fix an architecture drift confounder caused by repeated Opacus ModuleValidator.fix() calls. After this fix, the low utility persists, indicating that architecture drift was real but not causal. We identify signal-to-noise mismatch as the dominant failure mode: LoRA gradient norms (||g|| ~ 1e-3) are approximately 1000x smaller than DP noise (sigma*C ~ 0.6). We evaluate FedSVD [Lee et al., 2025] as a candidate mitigation but observe no improvement under our implementation.
+We discuss what these results support: LoRA for communication efficiency without privacy guarantees, and reported-accounting DP-SGD with full fine-tuning at reduced utility. Server-side adapter reparameterization and alternative privacy mechanisms remain open directions.
 
-We discuss practical recommendations: full fine-tuning with DP-SGD for formal privacy at reduced utility, and LoRA for communication efficiency without privacy guarantees. Server-side adapter reparameterization and alternative privacy mechanisms remain open directions.
-
-**Keywords:** Federated learning; differential privacy; LoRA; parameter-efficient fine-tuning; emotion classification; communication efficiency; signal-to-noise analysis
+**Keywords:** Federated learning; differential privacy; LoRA; parameter-efficient fine-tuning; emotion classification; communication efficiency
 
 ---
 
-## Word Count
+## Changes from Long Version
 
-Approximately 260 words (main body).
+1. Removed "eight variants, all ~0.1421" — now: "Tested LoRA-DP configurations show low utility or execution failures"
+2. Removed "architecture drift fixed, but not causal" claim (no controlled rerun evidence)
+3. Changed "dominant failure mode" to "working hypothesis"
+4. Corrected ratio: 0.6/0.001 ≈ 600 (not 1000)
+5. RDP claim limited: "records epsilon = 0.6283 for the specified accounting inputs" (not "verified")
+6. FedSVD: "Our FedSVD adaptation yielded macro-F1 = 0.1421 across three rounds at the reported precision"
+7. Removed "formal privacy" recommendation for full FT + DP; kept as "reported-accounting DP-SGD"
+
+Word count: ~205 words
