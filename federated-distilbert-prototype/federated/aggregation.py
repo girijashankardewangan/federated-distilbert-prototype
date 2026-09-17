@@ -87,3 +87,48 @@ def weighted_fedavg_qlora(states, counts, global_state=None):
         aggregated[key] = weighted_sum.to(states[0][key].dtype)
     
     return aggregated
+
+
+
+def fedsvd_aggregation(client_states, counts, prev_global_state):
+    """FedSVD: aggregate B matrices, use SVD to derive new A."""
+    total = sum(counts)
+    weights = [c / total for c in counts]
+    aggregated = {}
+    b_keys = [k for k in client_states[0].keys() if 'lora_B' in k]
+
+    for b_key in b_keys:
+        a_key = b_key.replace('lora_B', 'lora_A')
+        if a_key not in prev_global_state:
+            aggregated[b_key] = sum(w * s[b_key].float() for w, s in zip(weights, client_states)).to(client_states[0][b_key].dtype)
+            continue
+
+        B_avg = sum(w * s[b_key].float() for w, s in zip(weights, client_states))
+        A_prev = prev_global_state[a_key].float()
+        BA = torch.matmul(B_avg, A_prev)
+
+        try:
+            U, S, Vh = torch.linalg.svd(BA, full_matrices=False)
+        except Exception as e:
+            print(f"SVD failed for {b_key}: {e}")
+            aggregated[b_key] = B_avg.to(client_states[0][b_key].dtype)
+            aggregated[a_key] = A_prev.to(prev_global_state[a_key].dtype)
+            continue
+
+        r = A_prev.shape[0]
+        new_A = Vh[:r, :].contiguous()
+        new_B = torch.matmul(U[:, :r], torch.diag(S[:r])).contiguous()
+
+        aggregated[b_key] = new_B.to(client_states[0][b_key].dtype)
+        aggregated[a_key] = new_A.to(prev_global_state[a_key].dtype)
+
+    for key in client_states[0].keys():
+        if 'lora_A' in key or 'lora_B' in key or key in aggregated:
+            continue
+        aggregated[key] = sum(w * s[key].float() for w, s in zip(weights, client_states)).to(client_states[0][key].dtype)
+
+    for key in prev_global_state.keys():
+        if 'lora_A' in key and key not in aggregated:
+            aggregated[key] = prev_global_state[key].clone()
+
+    return aggregated

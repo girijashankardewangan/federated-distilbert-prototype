@@ -1,0 +1,23 @@
+{
+  "xlmr_central_v3": {
+    "command": "python run_paper3.py --model_name xlm-roberta-base --languages eng --clients 1 --rounds 5 --local_epochs 2 --batch_size 16 --max_length 64 --lr 2e-4 --use_lora --lora_r 32 --lora_alpha 64 --experiment_name paper3_xlmr_central_v3",
+    "test_macro_f1": 0.8124,
+    "test_micro_f1": 0.8344,
+    "timestamp": "2026-09-17T14:57:28.257437",
+    "note": "Reproduces earlier v2 run (0.8113). See CSV and log file."
+  },
+  "xlmr_fedsvd_v2": {
+    "command": "python run_paper3.py --model_name xlm-roberta-base --languages eng --clients 5 --rounds 5 --local_epochs 2 --batch_size 8 --max_length 64 --lr 2e-4 --use_lora --use_fedsvd --lora_r 32 --lora_alpha 64 --experiment_name paper3_xlmr_fedsvd_v2",
+    "test_macro_f1": 0.7037,
+    "test_micro_f1": 0.7521,
+    "timestamp": "2026-09-17T14:57:28.257454",
+    "note": "Reproduces earlier FedSVD run (0.7233). See CSV and log file."
+  },
+  "naive_fedsvd_comparison": {
+    "naive_fedavg_macro_f1": 0.142,
+    "fedsvd_macro_f1": 0.7037,
+    "improvement_factor": 4.96,
+    "centralized_macro_f1": 0.8124,
+    "gap_to_centralized": 0.1087
+  }
+}

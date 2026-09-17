@@ -18,7 +18,7 @@ from data.brighter import build_custom_split, LANGUAGE_CONFIGS
 from data.partitioning import dirichlet_partition
 from models.xlm_roberta import XLMRMultiLabel
 from federated.strategies import multilabel_loss
-from federated.aggregation import weighted_fedavg, weighted_fedavg_safe, weighted_fedavg_qlora
+from federated.aggregation import weighted_fedavg, fedsvd_aggregation, weighted_fedavg_safe, weighted_fedavg_qlora
 from evaluation.metrics import multilabel_metrics
 from privacy.opacus_dp import make_private_with_dp, get_epsilon, freeze_position_embeddings
 from privacy.hybrid_dp import make_hybrid_private
@@ -82,8 +82,16 @@ def strip_opacus_prefix(state_dict):
     return new_state
 
 def local_train(model, loader, device, epochs, lr, max_norm,
-                use_opacus=False, use_hybrid_dp=False,
+                use_opacus=False, use_fedsvd=False, use_hybrid_dp=False,
                 target_epsilon=2.0, target_delta=1e-5):
+    if use_fedsvd:
+        for name, p in model.named_parameters():
+            if 'lora_A' in name:
+                p.requires_grad = False
+            elif 'lora_B' in name:
+                p.requires_grad = True
+        print("FedSVD: A frozen, B trainable")
+
     engine = None
     if use_hybrid_dp:
         model, optimizer, loader, engine = make_hybrid_private(
@@ -148,6 +156,7 @@ def main(args):
         model_name=args.model_name,
         num_labels=len(LABELS_5),
         use_lora=args.use_lora,
+        use_fedsvd=args.use_fedsvd,
         use_qlora=args.use_qlora,
         lora_r=args.lora_r,
         lora_alpha=args.lora_alpha,
@@ -182,7 +191,7 @@ def main(args):
             local_model, avg_loss, eps = local_train(
                 model=local_model, loader=client_loader, device=device,
                 epochs=args.local_epochs, lr=args.lr, max_norm=args.max_grad_norm,
-                use_opacus=args.use_dp, use_hybrid_dp=args.use_hybrid_dp,
+                use_opacus=args.use_dp, use_fedsvd=args.use_fedsvd, use_hybrid_dp=args.use_hybrid_dp,
                 target_epsilon=args.target_epsilon,
                 target_delta=args.target_delta)
             if eps is not None:
@@ -201,13 +210,17 @@ def main(args):
 
         if args.use_qlora:
             global_state = weighted_fedavg_qlora(
-                client_states, client_counts, 
+                client_states, client_counts,
                 global_state=global_model.state_dict()
             )
+        elif args.use_fedsvd:
+            global_state = fedsvd_aggregation(
+                client_states, client_counts, global_model.state_dict()
+            )
+            print("[FedSVD] Server-side SVD applied")
         else:
             global_state = weighted_fedavg(client_states, client_counts)
-        
-        # Load with strict=False for QLoRA (metadata may differ)
+
         global_model.load_state_dict(global_state, strict=False)
 
         val_macro, val_micro = evaluate(global_model, val_loader, device)
@@ -264,6 +277,7 @@ if __name__ == "__main__":
     p.add_argument("--dirichlet_alpha", type=float, default=0.5)
     p.add_argument("--max_grad_norm", type=float, default=1.0)
     p.add_argument("--use_dp", action="store_true")
+    p.add_argument("--use_fedsvd", action="store_true")
     p.add_argument("--target_epsilon", type=float, default=2.0)
     p.add_argument("--target_delta", type=float, default=1e-5)
     p.add_argument("--checkpoint_dir", default="/content/drive/MyDrive/paper3_fairdp_xlm/checkpoints")

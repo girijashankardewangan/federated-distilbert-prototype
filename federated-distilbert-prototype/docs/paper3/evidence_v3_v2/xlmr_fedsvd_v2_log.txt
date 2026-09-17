@@ -1,0 +1,124 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+09/17/2026 14:31:37:WARNING:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Device: cuda
+Loading BRIGHTER: ['eng']
+Train: 5965, Val: 1278, Test: 1279
+Client sizes: [1014, 2463, 544, 915, 1029]
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  21%|██        | 41/199 [00:00<00:00, 406.34it/s]Loading weights:  49%|████▉     | 98/199 [00:00<00:00, 499.92it/s]Loading weights:  85%|████████▍ | 169/199 [00:00<00:00, 583.35it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 585.13it/s]
+[transformers] [1mXLMRobertaModel LOAD REPORT[0m from: xlm-roberta-base
+Key                       | Status     |  | 
+--------------------------+------------+--+-
+lm_head.layer_norm.weight | UNEXPECTED |  | 
+lm_head.dense.bias        | UNEXPECTED |  | 
+lm_head.bias              | UNEXPECTED |  | 
+lm_head.dense.weight      | UNEXPECTED |  | 
+lm_head.layer_norm.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+trainable params: 5,357,568 || all params: 283,401,216 || trainable%: 1.8905
+FedSVD: A matrix orthonormal initialized
+[Checkpoint] None found. Starting fresh.
+
+============================================================
+ROUND 1/5
+============================================================
+FedSVD: A frozen, B trainable
+  Client 0: n=1014, loss=0.5816, eps=None
+FedSVD: A frozen, B trainable
+  Client 1: n=2463, loss=0.5724, eps=None
+FedSVD: A frozen, B trainable
+  Client 2: n=544, loss=0.4667, eps=None
+FedSVD: A frozen, B trainable
+  Client 3: n=915, loss=0.4869, eps=None
+FedSVD: A frozen, B trainable
+  Client 4: n=1029, loss=0.4013, eps=None
+[FedSVD] Server-side SVD applied
+
+Round 1 done in 143.5s
+  Val:  macro=0.1542, micro=0.4583
+  Test: macro=0.1526, micro=0.4459
+[Checkpoint] Round 0 saved
+
+============================================================
+ROUND 2/5
+============================================================
+FedSVD: A frozen, B trainable
+  Client 0: n=1014, loss=0.4482, eps=None
+FedSVD: A frozen, B trainable
+  Client 1: n=2463, loss=0.4306, eps=None
+FedSVD: A frozen, B trainable
+  Client 2: n=544, loss=0.4037, eps=None
+FedSVD: A frozen, B trainable
+  Client 3: n=915, loss=0.4075, eps=None
+FedSVD: A frozen, B trainable
+  Client 4: n=1029, loss=0.3360, eps=None
+[FedSVD] Server-side SVD applied
+
+Round 2 done in 139.8s
+  Val:  macro=0.5393, micro=0.6508
+  Test: macro=0.5433, micro=0.6458
+[Checkpoint] Round 1 saved
+
+============================================================
+ROUND 3/5
+============================================================
+FedSVD: A frozen, B trainable
+  Client 0: n=1014, loss=0.3582, eps=None
+FedSVD: A frozen, B trainable
+  Client 1: n=2463, loss=0.3456, eps=None
+FedSVD: A frozen, B trainable
+  Client 2: n=544, loss=0.3386, eps=None
+FedSVD: A frozen, B trainable
+  Client 3: n=915, loss=0.3395, eps=None
+FedSVD: A frozen, B trainable
+  Client 4: n=1029, loss=0.2928, eps=None
+[FedSVD] Server-side SVD applied
+
+Round 3 done in 138.3s
+  Val:  macro=0.6641, micro=0.7161
+  Test: macro=0.6483, micro=0.7035
+[Checkpoint] Round 2 saved
+
+============================================================
+ROUND 4/5
+============================================================
+FedSVD: A frozen, B trainable
+  Client 0: n=1014, loss=0.3229, eps=None
+FedSVD: A frozen, B trainable
+  Client 1: n=2463, loss=0.2905, eps=None
+FedSVD: A frozen, B trainable
+  Client 2: n=544, loss=0.2990, eps=None
+FedSVD: A frozen, B trainable
+  Client 3: n=915, loss=0.3045, eps=None
+FedSVD: A frozen, B trainable
+  Client 4: n=1029, loss=0.2564, eps=None
+[FedSVD] Server-side SVD applied
+
+Round 4 done in 141.3s
+  Val:  macro=0.6959, micro=0.7430
+  Test: macro=0.6869, micro=0.7318
+[Checkpoint] Round 3 saved
+
+============================================================
+ROUND 5/5
+============================================================
+FedSVD: A frozen, B trainable
+  Client 0: n=1014, loss=0.2873, eps=None
+FedSVD: A frozen, B trainable
+  Client 1: n=2463, loss=0.2378, eps=None
+FedSVD: A frozen, B trainable
+  Client 2: n=544, loss=0.2753, eps=None
+FedSVD: A frozen, B trainable
+  Client 3: n=915, loss=0.2712, eps=None
+FedSVD: A frozen, B trainable
+  Client 4: n=1029, loss=0.2278, eps=None
+[FedSVD] Server-side SVD applied
+
+Round 5 done in 139.4s
+  Val:  macro=0.7090, micro=0.7566
+  Test: macro=0.7037, micro=0.7521
+[Checkpoint] Round 4 saved
+
+Final metrics: /content/paper3_checkpoints/../results/paper3_xlmr_fedsvd_v2_metrics.csv
+PAPER 3 TRAINING COMPLETE!
