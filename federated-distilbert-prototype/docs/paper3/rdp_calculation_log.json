@@ -1,0 +1,19 @@
+{
+  "environment": {
+    "timestamp": "2026-09-17T00:19:32.409089",
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.39",
+    "torch": "2.11.0+cpu",
+    "opacus": "1.6.0"
+  },
+  "inputs": {
+    "noise_multiplier": 1.1,
+    "sampling_rate": 0.001341156747694887,
+    "num_steps": 3750,
+    "delta": 1e-05
+  },
+  "output": {
+    "epsilon": 0.6283442271179711,
+    "delta": 1e-05
+  }
+}
