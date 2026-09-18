@@ -1,0 +1,60 @@
+{
+  "experiment": "paper3_sanity_fairbatch",
+  "config": {
+    "languages": [
+      "eng",
+      "hin",
+      "deu",
+      "esp",
+      "chn"
+    ],
+    "clients": 5,
+    "rounds": 3,
+    "local_epochs": 1,
+    "batch_size": 8,
+    "max_length": 64,
+    "lr": 0.0002,
+    "use_lora": true,
+    "lora_r": 32,
+    "lora_alpha": 64,
+    "use_fairbatch": true,
+    "seed": 42
+  },
+  "final_per_language": {
+    "chn": {
+      "macro_f1": 0.5997,
+      "n": 1275
+    },
+    "deu": {
+      "macro_f1": 0.5181,
+      "n": 1230
+    },
+    "eng": {
+      "macro_f1": 0.6403,
+      "n": 1225
+    },
+    "esp": {
+      "macro_f1": 0.7715,
+      "n": 871
+    },
+    "hin": {
+      "macro_f1": 0.811,
+      "n": 738
+    }
+  },
+  "final_avg_macro_f1": 0.7189,
+  "cross_lingual_gap": 0.2929,
+  "comparison_without_fairbatch": {
+    "avg_macro_f1": 0.7281,
+    "cross_lingual_gap": 0.341,
+    "gap_reduction": 0.0481,
+    "gap_reduction_pct": 14.1
+  },
+  "fairbatch_weights_final": {
+    "eng": 1.013,
+    "hin": 0.932,
+    "deu": 1.072,
+    "esp": 0.951,
+    "chn": 1.033
+  }
+}
