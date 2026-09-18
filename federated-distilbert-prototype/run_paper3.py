@@ -20,6 +20,7 @@ from models.xlm_roberta import XLMRMultiLabel
 from federated.strategies import multilabel_loss
 from federated.aggregation import weighted_fedavg, fedsvd_aggregation, weighted_fedavg_safe, weighted_fedavg_qlora
 from evaluation.metrics import multilabel_metrics
+from evaluation.per_language import per_language_metrics, cross_lingual_gap
 from privacy.opacus_dp import make_private_with_dp, get_epsilon, freeze_position_embeddings
 from privacy.hybrid_dp import make_hybrid_private
 from utils.checkpoint import CheckpointManager
@@ -27,6 +28,12 @@ from transformers import AutoTokenizer
 
 
 LABELS_5 = ["joy", "anger", "fear", "sadness", "surprise"]
+
+def extract_language_from_id(id_string):
+    if not isinstance(id_string, str):
+        return "unknown"
+    return id_string.split("_")[0]
+
 
 
 class TextDataset(Dataset):
@@ -52,7 +59,7 @@ class TextDataset(Dataset):
         return item["input_ids"].squeeze(0), item["attention_mask"].squeeze(0), target
 
 
-def evaluate(model, loader, device):
+def evaluate(model, loader, device, languages=None, labels=None):
     model.eval()
     all_prob, all_y = [], []
     with torch.no_grad():
@@ -64,9 +71,17 @@ def evaluate(model, loader, device):
             all_prob.append(torch.sigmoid(logits).cpu().numpy())
             all_y.append(y.cpu().numpy())
     if not all_prob:
-        return 0.0, 0.0
-    r = multilabel_metrics(np.vstack(all_y), np.vstack(all_prob))
-    return float(r["macro_f1"]), float(r["micro_f1"])
+        return 0.0, 0.0, {}
+    y_true_stack = np.vstack(all_y)
+    y_prob_stack = np.vstack(all_prob)
+    r = multilabel_metrics(y_true_stack, y_prob_stack)
+    per_lang = {}
+    if languages is not None and labels is not None:
+        try:
+            per_lang = per_language_metrics(y_true_stack, y_prob_stack, languages, labels)
+        except Exception as e:
+            print(f"per-language eval failed: {e}")
+    return float(r["macro_f1"]), float(r["micro_f1"]), per_lang
 
 
 
@@ -137,7 +152,7 @@ def main(args):
 
     print(f"Loading BRIGHTER: {args.languages}")
     train_df, val_df, test_df = build_custom_split(
-        configs=args.languages, seed=42,
+        configs=args.languages, seed=args.seed,
         train_fraction=0.70, validation_fraction=0.15)
     print(f"Train: {len(train_df)}, Val: {len(val_df)}, Test: {len(test_df)}")
 
@@ -148,8 +163,11 @@ def main(args):
     val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_ds, batch_size=args.batch_size, shuffle=False)
 
+    test_languages = np.array([extract_language_from_id(i) for i in test_df["id"].tolist()])
+    print(f"Test languages: {dict(zip(*np.unique(test_languages, return_counts=True)))}")
+
     client_dfs = dirichlet_partition(df=train_df, labels=LABELS_5,
-                                     clients=args.clients, alpha=args.dirichlet_alpha, seed=42)
+                                     clients=args.clients, alpha=args.dirichlet_alpha, seed=args.seed)
     print(f"Client sizes: {[len(c) for c in client_dfs]}")
 
     global_model = XLMRMultiLabel(
@@ -223,8 +241,11 @@ def main(args):
 
         global_model.load_state_dict(global_state, strict=False)
 
-        val_macro, val_micro = evaluate(global_model, val_loader, device)
-        test_macro, test_micro = evaluate(global_model, test_loader, device)
+        val_macro, val_micro, val_per_lang = evaluate(global_model, val_loader, device)
+        test_macro, test_micro, test_per_lang = evaluate(
+            global_model, test_loader, device,
+            languages=test_languages, labels=LABELS_5
+        )
         elapsed = time.time() - t0
 
         metrics = {
@@ -234,6 +255,7 @@ def main(args):
             "test_macro_f1": round(test_macro, 4),
             "test_micro_f1": round(test_micro, 4),
             "epsilon": round(round_eps, 4) if round_eps else None,
+            "per_language_test": test_per_lang,
             "elapsed_sec": round(elapsed, 1),
         }
         all_metrics.append(metrics)
@@ -241,6 +263,9 @@ def main(args):
         print(f"\nRound {round_num + 1} done in {elapsed:.1f}s")
         print(f"  Val:  macro={val_macro:.4f}, micro={val_micro:.4f}")
         print(f"  Test: macro={test_macro:.4f}, micro={test_micro:.4f}")
+        if test_per_lang:
+            for lang, r in sorted(test_per_lang.items()):
+                print(f"    {lang}: macro={r['macro_f1']:.4f}, n={r['n_samples']}")
         if round_eps:
             print(f"  Epsilon: {round_eps:.4f}")
 
@@ -275,6 +300,7 @@ if __name__ == "__main__":
     p.add_argument("--max_length", type=int, default=64)
     p.add_argument("--lr", type=float, default=2e-5)
     p.add_argument("--dirichlet_alpha", type=float, default=0.5)
+    p.add_argument("--seed", type=int, default=42)
     p.add_argument("--max_grad_norm", type=float, default=1.0)
     p.add_argument("--use_dp", action="store_true")
     p.add_argument("--use_fedsvd", action="store_true")

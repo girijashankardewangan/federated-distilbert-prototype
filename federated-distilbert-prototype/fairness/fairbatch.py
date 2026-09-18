@@ -1,30 +1,21 @@
-"""
-Paper 3: FairDP-XLM
-Client-side FairBatch reweighting for bias mitigation.
-"""
+"""Paper 3: Federated FairBatch."""
 import numpy as np
 import torch
-from torch.utils.data import WeightedRandomSampler
 
 
-class FairBatch:
-    def __init__(self, alpha=0.05, target_label=0, group_labels=None):
+class FederatedFairBatch:
+    def __init__(self, alpha=0.05, protected_attr="language"):
         self.alpha = alpha
-        self.target_label = target_label
-        self.group_labels = group_labels or []
-        self.group_weights = {g: 1.0 for g in self.group_labels}
+        self.protected_attr = protected_attr
+        self.group_weights = {}
 
     def fit_epoch(self, y_true, y_pred, groups):
-        y_true = np.asarray(y_true)
-        y_pred = np.asarray(y_pred)
-        groups = np.asarray(groups)
+        y_true = np.asarray(y_true); y_pred = np.asarray(y_pred); groups = np.asarray(groups)
         rates = {}
         for g in np.unique(groups):
             mask = groups == g
-            pos = y_true[mask] == self.target_label
-            pred = y_pred[mask] == self.target_label
-            tp = np.logical_and(pos, pred).sum()
-            total = pos.sum()
+            tp = np.logical_and(y_true[mask] == 1, y_pred[mask] == 1).sum()
+            total = (y_true[mask] == 1).sum()
             rates[g] = float(tp / total) if total > 0 else 0.0
         if len(rates) < 2:
             return
@@ -32,18 +23,21 @@ class FairBatch:
         for g in rates:
             gap = max_rate - rates[g]
             self.group_weights[g] = max(0.1, 1.0 - self.alpha * gap)
-        return rates
 
     def get_sample_weights(self, groups):
         groups = np.asarray(groups)
         return np.array([self.group_weights.get(g, 1.0) for g in groups])
 
 
-def make_weighted_sampler(dataset, groups, fairbatch):
-    weights = fairbatch.get_sample_weights(groups)
-    weights = torch.from_numpy(weights).double()
-    return WeightedRandomSampler(
-        weights=weights,
-        num_samples=len(weights),
-        replacement=True,
-    )
+def fairness_weighted_fedavg(states, counts, client_groups, fairbatch_weights):
+    effective = []
+    for i in range(len(states)):
+        fw = fairbatch_weights.get(client_groups[i], 1.0)
+        effective.append(counts[i] * fw)
+    total = sum(effective)
+    weights = [e / total for e in effective]
+    aggregated = {}
+    for key in states[0].keys():
+        ws = sum(w * s[key].float() for w, s in zip(weights, states))
+        aggregated[key] = ws.to(states[0][key].dtype)
+    return aggregated
