@@ -4,6 +4,7 @@ Federated multilingual emotion analytics with Opacus DP-SGD + checkpointing.
 """
 import os
 import sys
+import json
 import copy
 import time
 import argparse
@@ -255,7 +256,7 @@ def main(args):
             "test_macro_f1": round(test_macro, 4),
             "test_micro_f1": round(test_micro, 4),
             "epsilon": round(round_eps, 4) if round_eps else None,
-            "per_language_test": test_per_lang,
+            "per_language_test": json.dumps({str(k): v for k, v in test_per_lang.items()}) if test_per_lang else "{}",
             "elapsed_sec": round(elapsed, 1),
         }
         all_metrics.append(metrics)
