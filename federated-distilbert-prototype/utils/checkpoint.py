@@ -2,6 +2,21 @@ import os, json, torch
 from datetime import datetime
 
 
+
+
+def save_trainable_only(model):
+    """Save only trainable params -> ~10 MB instead of 1.13 GB."""
+    full_sd = model.state_dict()
+    keep = set()
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            keep.add(name)
+    for k in full_sd.keys():
+        if 'lora_' in k or 'classifier' in k:
+            keep.add(k)
+    return {k: v for k, v in full_sd.items() if k in keep}
+
+
 class CheckpointManager:
     def __init__(self, checkpoint_dir, experiment_name="paper3"):
         self.checkpoint_dir = checkpoint_dir

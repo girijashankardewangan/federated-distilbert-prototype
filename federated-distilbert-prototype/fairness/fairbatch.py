@@ -24,6 +24,22 @@ class FederatedFairBatch:
             gap = max_rate - rates[g]
             self.group_weights[g] = max(0.1, 1.0 - self.alpha * gap)
 
+    def update_from_f1(self, per_lang_f1):
+        if not per_lang_f1 or len(per_lang_f1) < 2:
+            return
+        max_f1 = max(per_lang_f1.values())
+        min_f1 = min(per_lang_f1.values())
+        span = max_f1 - min_f1
+        if span < 1e-6:
+            return
+        for lang, f1 in per_lang_f1.items():
+            gap = (max_f1 - f1) / span
+            self.group_weights[lang] = 1.0 + self.alpha * gap * 3.0
+        avg = sum(self.group_weights.values()) / len(self.group_weights)
+        if avg > 0:
+            for lang in self.group_weights:
+                self.group_weights[lang] /= avg
+
     def get_sample_weights(self, groups):
         groups = np.asarray(groups)
         return np.array([self.group_weights.get(g, 1.0) for g in groups])

@@ -11,7 +11,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader, Dataset, WeightedRandomSampler
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,6 +22,7 @@ from federated.strategies import multilabel_loss
 from federated.aggregation import weighted_fedavg, fedsvd_aggregation, weighted_fedavg_safe, weighted_fedavg_qlora
 from evaluation.metrics import multilabel_metrics
 from evaluation.per_language import per_language_metrics, cross_lingual_gap
+from fairness.fairbatch import FederatedFairBatch, fairness_weighted_fedavg
 from privacy.opacus_dp import make_private_with_dp, get_epsilon, freeze_position_embeddings
 from privacy.hybrid_dp import make_hybrid_private
 from utils.checkpoint import CheckpointManager
@@ -167,6 +168,9 @@ def main(args):
     test_languages = np.array([extract_language_from_id(i) for i in test_df["id"].tolist()])
     print(f"Test languages: {dict(zip(*np.unique(test_languages, return_counts=True)))}")
 
+    val_languages = np.array([extract_language_from_id(i) for i in val_df["id"].tolist()])
+    print(f"Val languages:  {dict(zip(*np.unique(val_languages, return_counts=True)))}")
+
     client_dfs = dirichlet_partition(df=train_df, labels=LABELS_5,
                                      clients=args.clients, alpha=args.dirichlet_alpha, seed=args.seed)
     print(f"Client sizes: {[len(c) for c in client_dfs]}")
@@ -193,6 +197,15 @@ def main(args):
             print(f"[Resume] Failed: {e}")
 
     all_metrics = []
+
+    # FairBatch initialization (Paper 4 fairness base)
+    fairbatch = None
+    if args.use_fairbatch:
+        fairbatch = FederatedFairBatch(alpha=0.05, protected_attr="language")
+        for lang in args.languages:
+            fairbatch.group_weights[lang] = 1.0
+        print(f"[FairBatch] Initialized with languages: {args.languages}")
+
     for round_num in range(start_round, args.rounds):
         print(f"\n{'='*60}")
         print(f"ROUND {round_num + 1}/{args.rounds}")
@@ -205,7 +218,17 @@ def main(args):
             if len(client_df) == 0:
                 continue
             client_ds = TextDataset(client_df, tokenizer, LABELS_5, args.max_length)
-            client_loader = DataLoader(client_ds, batch_size=args.batch_size, shuffle=True)
+            if args.use_fairbatch and fairbatch is not None:
+                client_langs = np.array([extract_language_from_id(i) for i in client_df["id"].tolist()])
+                sample_weights = fairbatch.get_sample_weights(client_langs)
+                sampler = WeightedRandomSampler(
+                    weights=torch.from_numpy(sample_weights).double(),
+                    num_samples=len(sample_weights),
+                    replacement=True,
+                )
+                client_loader = DataLoader(client_ds, batch_size=args.batch_size, sampler=sampler)
+            else:
+                client_loader = DataLoader(client_ds, batch_size=args.batch_size, shuffle=True)
             local_model = copy.deepcopy(global_model).to(device)
             local_model, avg_loss, eps = local_train(
                 model=local_model, loader=client_loader, device=device,
@@ -242,7 +265,10 @@ def main(args):
 
         global_model.load_state_dict(global_state, strict=False)
 
-        val_macro, val_micro, val_per_lang = evaluate(global_model, val_loader, device)
+        val_macro, val_micro, val_per_lang = evaluate(
+            global_model, val_loader, device,
+            languages=val_languages, labels=LABELS_5
+        )
         test_macro, test_micro, test_per_lang = evaluate(
             global_model, test_loader, device,
             languages=test_languages, labels=LABELS_5
@@ -267,6 +293,11 @@ def main(args):
         if test_per_lang:
             for lang, r in sorted(test_per_lang.items()):
                 print(f"    {lang}: macro={r['macro_f1']:.4f}, n={r['n_samples']}")
+
+            if args.use_fairbatch and fairbatch is not None:
+                per_lang_f1 = {str(k): v['macro_f1'] for k, v in val_per_lang.items()}
+                fairbatch.update_from_f1(per_lang_f1)
+                print(f"[FairBatch] Updated (val) weights: {fairbatch.group_weights}")
         if round_eps:
             print(f"  Epsilon: {round_eps:.4f}")
 
@@ -302,6 +333,7 @@ if __name__ == "__main__":
     p.add_argument("--lr", type=float, default=2e-5)
     p.add_argument("--dirichlet_alpha", type=float, default=0.5)
     p.add_argument("--seed", type=int, default=42)
+    p.add_argument("--use_fairbatch", action="store_true")
     p.add_argument("--max_grad_norm", type=float, default=1.0)
     p.add_argument("--use_dp", action="store_true")
     p.add_argument("--use_fedsvd", action="store_true")
