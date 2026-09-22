@@ -1,48 +1,38 @@
-# A Prototype Federated DistilBERT Pipeline for Explainable Emotion Classification
+# Federated Multilingual Emotion Analytics
 
-**This is a prototype implementation for demonstration purposes.**
+**Paper 3:** *Federated LoRA for Multilingual Emotion Classification: An Empirical Study of Aggregation, Privacy Integration, and Cross-Lingual Disparity*
 
-## What This Repository Contains
+**Authors:** Girija Shankar Dewangan, Partha Roy, Rajesh Tiwari
 
-- **Model:** DistilBERT-base-uncased (XLM-RoBERTa code available)
-- **Task:** Single-label emotion classification (5 classes)
-- **Clients:** 3 simulated clients
-- **Dataset:** 6 handcrafted sentences repeated (60 samples)
-- **Federated Learning:** 5 communication rounds, 2 local epochs
-- **Privacy:** Simulated gradient clipping and Gaussian noise
-- **Explainability:** Layer Integrated Gradients heatmap
-- **Results:** Fixed/simulated values (0.86 F1, 0.04 fairness gap)
+---
 
-## Code Files
+## Overview
 
-| File | Description |
-|------|-------------|
-| `federated/train.py` | Main federated training loop |
-| `models/xlm_roberta.py` | Model definition |
-| `data/brighter.py` | BRIGHTER dataset loader |
-| `privacy/dp.py` | Differential privacy utilities |
-| `xai/attention_explainer.py` | Explainability utilities |
+Code and results for the multilingual federated emotion classification study 
+using XLM-RoBERTa on the BRIGHTER dataset (5 languages: English, Hindi, German, 
+Spanish, Chinese).
 
-## Usage
+## Repository Structure
 
-```bash
-python -m federated.train --source brighter --languages eng --custom-split --rounds 5 --clients 5 --dp
-```
+- `run_paper3.py` — federated training script
+- `federated/aggregation.py` — FedAvg, FedSVD implementations
+- `privacy/opacus_dp.py` — DP-SGD integration
+- `models/xlm_roberta.py` — XLM-R + LoRA model
+- `docs/paper3/fedsvd_dp_fixed/` — post-fix DP results (commit `8bed10b`)
+- `docs/paper3/fedsvd_dp_failures/` — pre-fix failure logs (commit `21a023b`)
 
-## NOT Included (Future Work)
+## Key Results (Paper 3, 5 seeds)
 
-- XLM-RoBERTa validation
-- BRIGHTER dataset integration
-- Multi-label classification (6 emotions)
-- 10+ real clients
-- Formal differential privacy accounting
-- Secure aggregation
-- Validated membership inference
+| Method | Macro-F1 |
+|---|---|
+| Centralized | 0.7997 ± 0.0058 |
+| Naive FedAvg | 0.7749 ± 0.0130 |
+| FedSVD | 0.7642 ± 0.0121 |
+| FedSVD + FairBatch | 0.7557 ± 0.0168 |
+| FedSVD + DP (ε ≈ 4) | 0.0387 ± 0.0477 |
 
-## Paper
+## History
 
-Accompanying paper: *"A Prototype Federated DistilBERT Pipeline for Explainable Emotion Classification"*
-
-## License
-
-MIT
+Originally named `federated-distilbert-prototype` (Paper 2 audit). Renamed 
+to `federated-multilingual-emotion-analytics` for Paper 3 (XLM-R multilingual 
+study).
