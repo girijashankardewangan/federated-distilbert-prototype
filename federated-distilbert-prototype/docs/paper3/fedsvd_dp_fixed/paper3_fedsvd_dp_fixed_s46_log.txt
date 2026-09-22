@@ -1,0 +1,358 @@
+Device: cuda
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+09/22/2026 00:55:10:WARNING:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading BRIGHTER: ['eng', 'hin', 'deu', 'esp', 'chn']
+Using the latest cached version of the dataset since brighter-dataset/BRIGHTER-emotion-categories couldn't be found on the Hugging Face Hub
+09/22/2026 00:55:13:WARNING:Using the latest cached version of the dataset since brighter-dataset/BRIGHTER-emotion-categories couldn't be found on the Hugging Face Hub
+Found the latest cached dataset configuration 'eng' at /root/.cache/huggingface/datasets/brighter-dataset___brighter-emotion-categories/eng/0.0.0/419566ac8f46f951b51584be36c13e5363008144 (last modified on Mon Sep 21 23:43:05 2026).
+09/22/2026 00:55:13:WARNING:Found the latest cached dataset configuration 'eng' at /root/.cache/huggingface/datasets/brighter-dataset___brighter-emotion-categories/eng/0.0.0/419566ac8f46f951b51584be36c13e5363008144 (last modified on Mon Sep 21 23:43:05 2026).
+Train: 24912, Val: 5338, Test: 5339
+Test languages: {np.str_('chn'): np.int64(1265), np.str_('deu'): np.int64(1238), np.str_('eng'): np.int64(1233), np.str_('esp'): np.int64(850), np.str_('hin'): np.int64(753)}
+Val languages:  {np.str_('chn'): np.int64(1214), np.str_('deu'): np.int64(1274), np.str_('eng'): np.int64(1279), np.str_('esp'): np.int64(864), np.str_('hin'): np.int64(707)}
+Client sizes: [7518, 5555, 4363, 3430, 4046]
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights:  39%|███▉      | 78/199 [00:00<00:00, 767.58it/s]Loading weights:  78%|███████▊  | 156/199 [00:00<00:00, 768.14it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 766.30it/s]
+[transformers] [1mXLMRobertaModel LOAD REPORT[0m from: xlm-roberta-base
+Key                       | Status     |  | 
+--------------------------+------------+--+-
+lm_head.layer_norm.bias   | UNEXPECTED |  | 
+lm_head.dense.weight      | UNEXPECTED |  | 
+lm_head.dense.bias        | UNEXPECTED |  | 
+lm_head.bias              | UNEXPECTED |  | 
+lm_head.layer_norm.weight | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+trainable params: 5,357,568 || all params: 283,401,216 || trainable%: 1.8905
+FedSVD: A matrix orthonormal initialized
+[Checkpoint] None found. Starting fresh.
+[VRAM] Reset | Initial: 1.13 GB
+
+============================================================
+ROUND 1/5
+============================================================
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5310
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 0: n=7518, loss=0.5387, eps=3.9979263177156272
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5450
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 1: n=5555, loss=0.5455, eps=3.991549984867684
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5566
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 2: n=4363, loss=0.4577, eps=3.998685660149683
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5698
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 3: n=3430, loss=0.4426, eps=3.994310378859851
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5609
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 4: n=4046, loss=0.4445, eps=3.992529161068459
+[FedSVD] Server-side SVD applied
+
+Round 1 done in 823.8s
+  Val:  macro=0.0000, micro=0.0000
+  Test: macro=0.0000, micro=0.0000
+    chn: macro=0.0000, n=1265
+    deu: macro=0.0000, n=1238
+    eng: macro=0.0000, n=1233
+    esp: macro=0.0000, n=850
+    hin: macro=0.0000, n=753
+  Epsilon: 3.9925
+[Checkpoint] Round 0 saved
+
+============================================================
+ROUND 2/5
+============================================================
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5310
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 0: n=7518, loss=0.5398, eps=3.9979263177156272
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5450
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 1: n=5555, loss=0.5260, eps=3.990791492387135
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5566
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 2: n=4363, loss=0.4300, eps=3.9991753832929127
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5698
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 3: n=3430, loss=0.3574, eps=3.994310378859851
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5609
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 4: n=4046, loss=0.3723, eps=3.992529161068459
+[FedSVD] Server-side SVD applied
+
+Round 2 done in 836.0s
+  Val:  macro=0.0000, micro=0.0000
+  Test: macro=0.0000, micro=0.0000
+    chn: macro=0.0000, n=1265
+    deu: macro=0.0000, n=1238
+    eng: macro=0.0000, n=1233
+    esp: macro=0.0000, n=850
+    hin: macro=0.0000, n=753
+  Epsilon: 3.9925
+[Checkpoint] Round 1 saved
+
+============================================================
+ROUND 3/5
+============================================================
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5310
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 0: n=7518, loss=0.5382, eps=3.998210260561199
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5450
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 1: n=5555, loss=0.5161, eps=3.99117073862741
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5566
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 2: n=4363, loss=0.4275, eps=3.998685660149683
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5698
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 3: n=3430, loss=0.3526, eps=3.994310378859851
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5609
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 4: n=4046, loss=0.3616, eps=3.9920072920465386
+[FedSVD] Server-side SVD applied
+
+Round 3 done in 832.7s
+  Val:  macro=0.0000, micro=0.0000
+  Test: macro=0.0000, micro=0.0000
+    chn: macro=0.0000, n=1265
+    deu: macro=0.0000, n=1238
+    eng: macro=0.0000, n=1233
+    esp: macro=0.0000, n=850
+    hin: macro=0.0000, n=753
+  Epsilon: 3.9920
+[Checkpoint] Round 2 saved
+
+============================================================
+ROUND 4/5
+============================================================
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5310
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 0: n=7518, loss=0.5297, eps=3.998210260561199
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5450
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 1: n=5555, loss=0.5025, eps=3.991549984867684
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5566
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 2: n=4363, loss=0.4181, eps=3.998685660149683
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5698
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 3: n=3430, loss=0.3435, eps=3.9930751511955767
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5609
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 4: n=4046, loss=0.3546, eps=3.992529161068459
+[FedSVD] Server-side SVD applied
+
+Round 4 done in 840.4s
+  Val:  macro=0.0000, micro=0.0000
+  Test: macro=0.0000, micro=0.0000
+    chn: macro=0.0000, n=1265
+    deu: macro=0.0000, n=1238
+    eng: macro=0.0000, n=1233
+    esp: macro=0.0000, n=850
+    hin: macro=0.0000, n=753
+  Epsilon: 3.9925
+[Checkpoint] Round 3 saved
+
+============================================================
+ROUND 5/5
+============================================================
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5310
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 0: n=7518, loss=0.5130, eps=3.998210260561199
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5450
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 1: n=5555, loss=0.4820, eps=3.991549984867684
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5566
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 2: n=4363, loss=0.3986, eps=3.9991753832929127
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5698
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 3: n=3430, loss=0.3346, eps=3.993692765027714
+FedSVD: A frozen, B trainable
+Pooler frozen: 1 params
+Fixing model ONCE (found 1 issues)
+/usr/local/lib/python3.13/dist-packages/opacus/privacy_engine.py:98: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+  warnings.warn(
+/usr/local/lib/python3.13/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the largest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+Opacus attached. Noise multiplier: 0.5609
+<sys>:0: UserWarning: Full backward hook is firing when gradients are computed with respect to module outputs since no inputs require gradients. See https://docs.pytorch.org/docs/main/generated/torch.nn.Module.html#torch.nn.Module.register_full_backward_hook for more details.
+  Client 4: n=4046, loss=0.3409, eps=3.992529161068459
+[FedSVD] Server-side SVD applied
+
+Round 5 done in 831.7s
+  Val:  macro=0.0000, micro=0.0000
+  Test: macro=0.0000, micro=0.0000
+    chn: macro=0.0000, n=1265
+    deu: macro=0.0000, n=1238
+    eng: macro=0.0000, n=1233
+    esp: macro=0.0000, n=850
+    hin: macro=0.0000, n=753
+  Epsilon: 3.9925
+[Checkpoint] Round 4 saved
+
+Final metrics: /content/paper3_checkpoints/../results/paper3_fedsvd_dp_fixed_s46_metrics.csv
+[VRAM] Peak allocated: 10.04 GB
+[VRAM] Peak reserved:  10.21 GB
+PAPER 3 TRAINING COMPLETE!
